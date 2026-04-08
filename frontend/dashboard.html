@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCI Assistive Control — Real-Time Dashboard</title>
+  <meta name="description" content="Real-time Brain-Computer Interface dashboard for motor imagery classification">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN SYSTEM
+       ═══════════════════════════════════════════ */
+    :root {
+      --bg-primary:    #0a0a1a;
+      --bg-secondary:  #12122a;
+      --bg-card:       #181838;
+      --bg-card-hover: #1e1e48;
+      --border:        rgba(255, 255, 255, 0.06);
+
+      --text-primary:    #e8e8f0;
+      --text-secondary:  #8888aa;
+      --text-muted:      #55557a;
+
+      --cyan:    #00d2ff;
+      --orange:  #f5a623;
+      --green:   #10e87e;
+      --red:     #e94560;
+      --purple:  #7b68ee;
+
+      --cyan-glow:    rgba(0, 210, 255, 0.15);
+      --orange-glow:  rgba(245, 166, 35, 0.15);
+      --green-glow:   rgba(16, 232, 126, 0.12);
+
+      --radius:     12px;
+      --radius-lg:  20px;
+
+      --font:       'Inter', -apple-system, sans-serif;
+      --font-mono:  'JetBrains Mono', 'Consolas', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════
+       HEADER
+       ═══════════════════════════════════════════ */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(18, 18, 42, 0.95) 0%, var(--bg-primary) 100%);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo {
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .header-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    #statusBadge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: var(--font-mono);
+      transition: all 0.3s ease;
+    }
+
+    #statusBadge.connected {
+      background: var(--green-glow);
+      color: var(--green);
+      border: 1px solid rgba(16, 232, 126, 0.25);
+    }
+
+    #statusBadge.disconnected {
+      background: rgba(233, 69, 96, 0.1);
+      color: var(--red);
+      border: 1px solid rgba(233, 69, 96, 0.25);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .connected .status-dot { background: var(--green); }
+    .disconnected .status-dot { background: var(--red); animation: none; }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.85); }
+    }
+
+    /* ═══════════════════════════════════════════
+       MAIN LAYOUT
+       ═══════════════════════════════════════════ */
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      transition: all 0.25s ease;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .card-title {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* ═══════════════════════════════════════════
+       PREDICTION CARD (spans full width)
+       ═══════════════════════════════════════════ */
+    .prediction-card {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .prediction-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, var(--glow-color, transparent) 0%, transparent 60%);
+      opacity: 0.08;
+      transition: all 0.5s ease;
+    }
+
+    #predictionLabel {
+      font-size: 72px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      margin-bottom: 12px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-shadow: 0 0 40px var(--pred-color, transparent);
+    }
+
+    #predictionLabel.LEFT  { color: var(--cyan); --pred-color: var(--cyan); }
+    #predictionLabel.RIGHT { color: var(--orange); --pred-color: var(--orange); }
+    #predictionLabel.NEUTRAL { color: var(--text-muted); }
+    #predictionLabel.idle  { color: var(--text-muted); font-size: 48px; }
+
+    .prediction-card.LEFT  { --glow-color: var(--cyan); }
+    .prediction-card.RIGHT { --glow-color: var(--orange); }
+
+    .prediction-meta {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-top: 8px;
+    }
+
+    .meta-item {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .meta-value {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    /* ═══════════════════════════════════════════
+       CONFIDENCE BARS
+       ═══════════════════════════════════════════ */
+    .confidence-card {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .conf-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .conf-label {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      width: 54px;
+      text-align: right;
+    }
+
+    .conf-label.left  { color: var(--cyan); }
+    .conf-label.right { color: var(--orange); }
+
+    .conf-bar-bg {
+      flex: 1;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .conf-bar-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .conf-bar-fill.left {
+      background: linear-gradient(90deg, #0080a8, var(--cyan));
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    .conf-bar-fill.right {
+      background: linear-gradient(90deg, #a06800, var(--orange));
+      box-shadow: 0 0 15px var(--orange-glow);
+    }
+
+    .conf-value {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 600;
+      width: 50px;
+      text-align: left;
+      color: var(--text-secondary);
+    }
+
+    /* ═══════════════════════════════════════════
+       STATS CARD
+       ═══════════════════════════════════════════ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .stat-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    /* ═══════════════════════════════════════════
+       EEG WAVEFORM
+       ═══════════════════════════════════════════ */
+    .eeg-card {
+      grid-column: 1 / -1;
+    }
+
+    #eegCanvas {
+      width: 100%;
+      height: 140px;
+      border-radius: var(--radius);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════════
+       HISTORY LOG
+       ═══════════════════════════════════════════ */
+    .history-card {
+      grid-column: 1 / -1;
+    }
+
+    #historyLog {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--bg-card-hover) transparent;
+    }
+
+    .history-item {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      opacity: 0;
+      animation: fadeIn 0.3s ease forwards;
+    }
+
+    .history-item.LEFT {
+      background: var(--cyan-glow);
+      color: var(--cyan);
+      border-color: rgba(0, 210, 255, 0.2);
+    }
+
+    .history-item.RIGHT {
+      background: var(--orange-glow);
+      color: var(--orange);
+      border-color: rgba(245, 166, 35, 0.2);
+    }
+
+    .history-item.NEUTRAL {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══════════════════════════════════════════
+       CONTROLS
+       ═══════════════════════════════════════════ */
+    .controls {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .btn.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: white;
+    }
+
+    .btn.active:hover {
+      background: #6a58dd;
+    }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+        padding: 16px;
+      }
+      .prediction-card { grid-column: 1; }
+      .eeg-card { grid-column: 1; }
+      .history-card { grid-column: 1; }
+      .controls { grid-column: 1; }
+      #predictionLabel { font-size: 48px; }
+      header { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header>
+    <div class="header-left">
+      <span class="logo">🧠</span>
+      <div>
+        <div class="header-title">BCI Assistive Control</div>
+        <div class="header-subtitle">Group 7 · Motor Imagery · Real-Time</div>
+      </div>
+    </div>
+    <div id="statusBadge" class="disconnected">
+      <span class="status-dot"></span>
+      <span id="statusText">Disconnected</span>
+    </div>
+  </header>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <main>
+
+    <!-- Prediction Display -->
+    <div class="card prediction-card" id="predictionCard">
+      <div id="predictionLabel" class="idle">Waiting for Signal</div>
+      <div class="prediction-meta">
+        <div class="meta-item">Confidence: <span class="meta-value" id="metaConfidence">—</span></div>
+        <div class="meta-item">Latency: <span class="meta-value" id="metaLatency">—</span></div>
+        <div class="meta-item">Model: <span class="meta-value" id="metaModel">—</span></div>
+      </div>
+    </div>
+
+    <!-- Confidence Bars -->
+    <div class="card confidence-card">
+      <div class="card-title">Class Probabilities</div>
+      <div class="conf-row">
+        <span class="conf-label left">LEFT</span>
+        <div class="conf-bar-bg">
+          <div class="conf-bar-fill left" id="confBarLeft" style="width: 0%"></div>
+        </div>
+        <span class="conf-value" id="confValueLeft">0%</span>
+      </div>
+      <div class="conf-row">
+        <span class="conf-label right">RIGHT</span>
+        <div class="conf-bar-bg">
+          <div class="conf-bar-fill right" id="confBarRight" style="width: 0%"></div>
+        </div>
+        <span class="conf-value" id="confValueRight">0%</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="card">
+      <div class="card-title">Session Statistics</div>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Predictions</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statAvgConf">0%</div>
+          <div class="stat-label">Avg Confidence</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statLeft">0</div>
+          <div class="stat-label">Left Count</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="statRight">0</div>
+          <div class="stat-label">Right Count</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EEG Waveform -->
+    <div class="card eeg-card">
+      <div class="card-title">Live EEG Signal</div>
+      <canvas id="eegCanvas"></canvas>
+    </div>
+
+    <!-- Prediction History -->
+    <div class="card history-card">
+      <div class="card-title">Prediction History</div>
+      <div id="historyLog"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn active" id="btnSimulate" onclick="toggleSimulation()">
+        ▶ Start Simulation
+      </button>
+      <button class="btn" id="btnClear" onclick="clearSession()">
+        ↺ Clear Session
+      </button>
+      <button class="btn" id="btnModel" onclick="toggleModel()">
+        Model: CNN
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ═══════════ JAVASCRIPT ═══════════ -->
+  <script>
+    // ─────────────────────────────────────
+    // CONFIGURATION
+    // ─────────────────────────────────────
+
+    const API_BASE = 'http://localhost:5000';
+    const POLL_INTERVAL_MS = 2000;  // Prediction poll rate for simulation
+
+    // ─────────────────────────────────────
+    // STATE
+    // ─────────────────────────────────────
+
+    let isSimulating = false;
+    let simulationTimer = null;
+    let selectedModel = 'cnn';
+    let stats = { total: 0, left: 0, right: 0, totalConf: 0 };
+    let eegBuffer = [];
+    const MAX_EEG_POINTS = 700;
+    const MAX_HISTORY = 30;
+
+    // ─────────────────────────────────────
+    // EEG WAVEFORM RENDERING
+    // ─────────────────────────────────────
+
+    const canvas = document.getElementById('eegCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+      canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    function drawEEG() {
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      ctx.clearRect(0, 0, w, h);
+
+      if (eegBuffer.length < 2) return;
+
+      // Grid lines
+      ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+      ctx.lineWidth = 1;
+      for (let y = 0; y < h; y += 28) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Waveform
+      ctx.strokeStyle = '#00d2ff';
+      ctx.lineWidth = 1.8;
+      ctx.shadowColor = '#00d2ff';
+      ctx.shadowBlur = 6;
+      ctx.beginPath();
+
+      const step = w / Math.max(eegBuffer.length - 1, 1);
+      eegBuffer.forEach((v, i) => {
+        const x = i * step;
+        const y = h / 2 - (v / 512) * (h * 0.4);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Simulated EEG generator (sine + noise)
+    let eegPhase = 0;
+    function generateEEGSample() {
+      eegPhase += 0.08;
+      const alpha = Math.sin(eegPhase * 1.0) * 180;
+      const beta  = Math.sin(eegPhase * 2.5) * 80;
+      const noise = (Math.random() - 0.5) * 100;
+      return alpha + beta + noise;
+    }
+
+    setInterval(() => {
+      if (isSimulating) {
+        eegBuffer.push(generateEEGSample());
+        if (eegBuffer.length > MAX_EEG_POINTS) eegBuffer.shift();
+        drawEEG();
+      }
+    }, 8);
+
+    // ─────────────────────────────────────
+    // API COMMUNICATION
+    // ─────────────────────────────────────
+
+    async function checkHealth() {
+      try {
+        const res = await fetch(`${API_BASE}/health`);
+        if (res.ok) {
+          setStatus(true);
+          return true;
+        }
+      } catch (e) {}
+      setStatus(false);
+      return false;
+    }
+
+    async function fetchSimulatedPrediction() {
+      try {
+        const res = await fetch(`${API_BASE}/simulate`);
+        if (!res.ok) return;
+        const data = await res.json();
+        updatePrediction(data);
+      } catch (e) {
+        // If API is down, generate local fake prediction
+        const label = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
+        const conf = 0.65 + Math.random() * 0.3;
+        updatePrediction({
+          prediction: label,
+          confidence: conf,
+          probabilities: {
+            LEFT:  label === 'LEFT'  ? conf : 1 - conf,
+            RIGHT: label === 'RIGHT' ? conf : 1 - conf
+          },
+          latency_ms: Math.round(30 + Math.random() * 50),
+          model_used: 'local-sim'
+        });
+      }
+    }
+
+    // ─────────────────────────────────────
+    // UI UPDATES
+    // ─────────────────────────────────────
+
+    function setStatus(connected) {
+      const badge = document.getElementById('statusBadge');
+      const text  = document.getElementById('statusText');
+      if (connected) {
+        badge.className = 'connected';
+        text.textContent = 'Connected';
+      } else {
+        badge.className = 'disconnected';
+        text.textContent = 'Disconnected';
+      }
+    }
+
+    function updatePrediction(data) {
+      const { prediction, confidence, probabilities, latency_ms, model_used } = data;
+
+      // Prediction label
+      const label = document.getElementById('predictionLabel');
+      label.textContent = prediction;
+      label.className = prediction;
+
+      // Card glow
+      const card = document.getElementById('predictionCard');
+      card.className = `card prediction-card ${prediction}`;
+
+      // Animate — subtle scale
+      label.style.transform = 'scale(1.05)';
+      setTimeout(() => { label.style.transform = 'scale(1)'; }, 200);
+
+      // Meta
+      document.getElementById('metaConfidence').textContent =
+        `${(confidence * 100).toFixed(1)}%`;
+      document.getElementById('metaLatency').textContent =
+        `${latency_ms} ms`;
+      document.getElementById('metaModel').textContent =
+        (model_used || selectedModel).toUpperCase();
+
+      // Confidence bars
+      const leftPct  = ((probabilities.LEFT || 0) * 100).toFixed(1);
+      const rightPct = ((probabilities.RIGHT || 0) * 100).toFixed(1);
+      document.getElementById('confBarLeft').style.width  = `${leftPct}%`;
+      document.getElementById('confBarRight').style.width = `${rightPct}%`;
+      document.getElementById('confValueLeft').textContent  = `${leftPct}%`;
+      document.getElementById('confValueRight').textContent = `${rightPct}%`;
+
+      // Stats
+      stats.total++;
+      if (prediction === 'LEFT') stats.left++;
+      if (prediction === 'RIGHT') stats.right++;
+      stats.totalConf += confidence;
+
+      document.getElementById('statTotal').textContent = stats.total;
+      document.getElementById('statLeft').textContent = stats.left;
+      document.getElementById('statRight').textContent = stats.right;
+      document.getElementById('statAvgConf').textContent =
+        `${((stats.totalConf / stats.total) * 100).toFixed(0)}%`;
+
+      // History
+      addHistory(prediction, confidence);
+    }
+
+    function addHistory(prediction, confidence) {
+      const log = document.getElementById('historyLog');
+      const item = document.createElement('div');
+      item.className = `history-item ${prediction}`;
+      item.textContent = `${prediction} ${(confidence * 100).toFixed(0)}%`;
+
+      log.insertBefore(item, log.firstChild);
+
+      // Limit history items
+      while (log.children.length > MAX_HISTORY) {
+        log.removeChild(log.lastChild);
+      }
+    }
+
+    // ─────────────────────────────────────
+    // CONTROLS
+    // ─────────────────────────────────────
+
+    function toggleSimulation() {
+      const btn = document.getElementById('btnSimulate');
+      if (isSimulating) {
+        isSimulating = false;
+        clearInterval(simulationTimer);
+        simulationTimer = null;
+        btn.textContent = '▶ Start Simulation';
+        btn.classList.remove('active');
+      } else {
+        isSimulating = true;
+        btn.textContent = '⏸ Stop Simulation';
+        btn.classList.add('active');
+        // Start polling
+        fetchSimulatedPrediction();
+        simulationTimer = setInterval(fetchSimulatedPrediction, POLL_INTERVAL_MS);
+      }
+    }
+
+    function clearSession() {
+      stats = { total: 0, left: 0, right: 0, totalConf: 0 };
+      eegBuffer = [];
+      document.getElementById('statTotal').textContent = '0';
+      document.getElementById('statLeft').textContent = '0';
+      document.getElementById('statRight').textContent = '0';
+      document.getElementById('statAvgConf').textContent = '0%';
+      document.getElementById('historyLog').innerHTML = '';
+      document.getElementById('predictionLabel').textContent = 'Waiting for Signal';
+      document.getElementById('predictionLabel').className = 'idle';
+      document.getElementById('predictionCard').className = 'card prediction-card';
+      document.getElementById('metaConfidence').textContent = '—';
+      document.getElementById('metaLatency').textContent = '—';
+      document.getElementById('metaModel').textContent = '—';
+      document.getElementById('confBarLeft').style.width = '0%';
+      document.getElementById('confBarRight').style.width = '0%';
+      document.getElementById('confValueLeft').textContent = '0%';
+      document.getElementById('confValueRight').textContent = '0%';
+      drawEEG();
+    }
+
+    function toggleModel() {
+      const btn = document.getElementById('btnModel');
+      selectedModel = selectedModel === 'cnn' ? 'svm' : 'cnn';
+      btn.textContent = `Model: ${selectedModel.toUpperCase()}`;
+    }
+
+    // ─────────────────────────────────────
+    // INIT
+    // ─────────────────────────────────────
+
+    checkHealth();
+    setInterval(checkHealth, 5000);
+  </script>
+</body>
+</html>

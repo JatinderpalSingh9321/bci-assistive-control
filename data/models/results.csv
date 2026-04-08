@@ -1,0 +1,7 @@
+model,subject,accuracy
+cnn,1,1.0
+cnn,2,1.0
+cnn,3,1.0
+cnn,4,1.0
+cnn,5,1.0
+cnn,6,1.0

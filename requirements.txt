@@ -1,0 +1,32 @@
+# ============================================
+# BCI Assistive Control — Python Dependencies
+# Group No. 7 | 8th Semester Major Project
+# ============================================
+
+# Core scientific stack
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+
+# Visualization
+matplotlib>=3.7
+seaborn>=0.12
+
+# EEG signal processing
+mne>=1.4
+
+# Classical machine learning
+scikit-learn>=1.2
+
+# Deep learning
+tensorflow>=2.12
+
+# REST API
+flask>=2.3
+flask-cors>=4.0
+
+# Hardware serial interface
+pyserial>=3.5
+
+# Experiment paradigm UI
+pygame>=2.5
