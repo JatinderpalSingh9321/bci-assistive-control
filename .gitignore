@@ -30,10 +30,10 @@ desktop.ini
 *.ipynb_checkpoints
 
 # Data (large files — track with Git LFS or exclude)
-data/raw/
-data/preprocessed/
-data/models/*.h5
-data/models/*.pkl
+# data/raw/
+# data/preprocessed/
+# data/models/*.h5
+# data/models/*.pkl
 
 # Results (regenerable)
 results/*.png
