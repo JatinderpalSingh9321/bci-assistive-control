@@ -37,7 +37,7 @@ for d in [RAW_DATA_DIR, PREPROCESSED_DIR, MODELS_DIR, RESULTS_DIR]:
 
 # Serial port for Upside Down Labs BioAmp EXG Pill + Arduino
 # Adjust for your system: COM3 (Windows), /dev/ttyUSB0 (Linux), /dev/cu.usbmodem* (Mac)
-SERIAL_PORT  = "COM3"
+SERIAL_PORT  = "COM7"
 BAUD_RATE    = 115200
 SERIAL_TIMEOUT = 1  # seconds
 
@@ -177,7 +177,7 @@ def save_session_metadata(subject_id, session_id=1, **extra_fields):
         "trials_per_subject": TRIALS_PER_SUBJECT,
         "imagery_duration_sec": IMAGERY_DURATION,
         "freq_band_hz": [FREQ_LOW, FREQ_HIGH],
-        "electrode_placement": "Fp1,Fp2,F3,F4,C3,Cz,C4,P3,Pz,P4",
+        "electrode_placement": "C3,C4,Fpz (Single Channel Bipolar)",
     }
     meta.update(extra_fields)
 

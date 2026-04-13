@@ -30,10 +30,10 @@ unsigned long sampleCount = 0;
 void setup() {
   Serial.begin(BAUD_RATE);
 
-  // Use external 3.3V reference for better ADC resolution
-  // Connect Arduino 3.3V pin to AREF pin
-  analogReference(EXTERNAL);
-
+  // Default ADC resolution is 10-bit (0-1023) to remain compatible with data processing scripts
+  // ARDUINO R4 OPTIMIZATION: Do not use analogReference(EXTERNAL) here
+  analogReadResolution(10);
+  
   pinMode(LED_PIN, OUTPUT);
   digitalWrite(LED_PIN, LOW);
 

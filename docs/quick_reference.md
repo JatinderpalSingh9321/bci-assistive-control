@@ -81,15 +81,13 @@ open frontend/dashboard.html
 ```
 For MOTOR IMAGERY, focus on:
 
-  Prefrontal:  Fp1 ←——→ Fp2    (planning signals)
-  Frontal:     F3  ←——→ F4     (left/right motor planning)
-  Central:     C3  ←——→ Cz ←——→ C4   (primary motor cortex)
-  Parietal:    P3  ←——→ P4     (sensory integration)
+  Central:     C3  (Left motor cortex)
+  Central:     C4  (Right motor cortex)
+  Ground/Ref:  Fpz (Forehead)
 
 Motor Imagery Signature (ERD):
-  LEFT hand  → F3, C3, P3 desynchronize (alpha-beta power drops)
-  RIGHT hand → F4, C4, P4 desynchronize
-  Cz:          Active for both hands
+  LEFT hand  → C3 desynchronizes (alpha-beta power drops)
+  RIGHT hand → C4 desynchronizes
 ```
 
 ---
@@ -131,9 +129,7 @@ Code:
 
 Expected feature importance:
   ✓ Beta ERD:             Most important (explains ~45% variance)
-  ✓ Motor channels (C3, Cz, C4):  High importance
-  ✓ Frontal channels (F3, F4):    Medium importance
-  ✗ Prefrontal (Fp1, Fp2):        Lower importance (more artefact-prone)
+  ✓ Motor channels (C3, C4):  High importance
 ```
 
 ---

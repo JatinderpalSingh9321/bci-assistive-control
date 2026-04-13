@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary": "#440080",
+                    "tertiary": "#c799ff",
+                    "on-surface": "#ecedf6",
+                    "surface-container-low": "#10131a",
+                    "on-primary-fixed": "#000000",
+                    "primary": "#bc9dff",
+                    "error": "#ff6e84",
+                    "primary-dim": "#894bff",
+                    "on-tertiary-fixed-variant": "#50158d",
+                    "on-secondary-container": "#e8fbff",
+                    "inverse-surface": "#f9f9ff",
+                    "secondary-dim": "#00d4ec",
+                    "on-tertiary-fixed": "#25004b",
+                    "on-background": "#ecedf6",
+                    "surface": "#0b0e14",
+                    "primary-container": "#b08cff",
+                    "surface-container-highest": "#22262f",
+                    "surface-dim": "#0b0e14",
+                    "surface-variant": "#22262f",
+                    "on-primary-container": "#2d006d",
+                    "inverse-primary": "#7327ef",
+                    "surface-bright": "#282c36",
+                    "on-error-container": "#ffb2b9",
+                    "on-primary": "#3b008a",
+                    "on-primary-fixed-variant": "#380084",
+                    "secondary-fixed": "#26e6ff",
+                    "tertiary-dim": "#ba85fb",
+                    "primary-fixed": "#b08cff",
+                    "on-secondary-fixed-variant": "#005964",
+                    "outline-variant": "#45484f",
+                    "surface-container-lowest": "#000000",
+                    "tertiary-fixed": "#c99dff",
+                    "error-container": "#a70138",
+                    "on-secondary": "#004d57",
+                    "inverse-on-surface": "#52555c",
+                    "surface-tint": "#bc9dff",
+                    "on-tertiary-container": "#340064",
+                    "error-dim": "#d73357",
+                    "background": "#0b0e14",
+                    "secondary-fixed-dim": "#00d7f0",
+                    "outline": "#73757d",
+                    "on-error": "#490013",
+                    "on-surface-variant": "#a9abb3",
+                    "tertiary-fixed-dim": "#bf8bff",
+                    "surface-container-high": "#1c2028",
+                    "secondary": "#00e3fd",
+                    "on-secondary-fixed": "#003a42",
+                    "tertiary-container": "#bc87fe",
+                    "surface-container": "#161a21",
+                    "primary-fixed-dim": "#a57bff",
+                    "secondary-container": "#006875"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Manrope"],
+                    "label": ["Manrope"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neural-grid {
+            background-image: linear-gradient(to right, #45484f 1px, transparent 1px),
+                              linear-gradient(to bottom, #45484f 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.1;
+        }
+        .glass-panel {
+            background: rgba(22, 26, 33, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .neon-glow-primary {
+            box-shadow: 0 0 20px rgba(188, 157, 255, 0.15);
+        }
+        .neon-glow-secondary {
+            box-shadow: 0 0 20px rgba(0, 227, 253, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary overflow-hidden">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-16 bg-[#0b0e14] backdrop-blur-xl bg-opacity-80 border-b border-[#45484f] border-opacity-15 shadow-[0_0_30px_rgba(188,157,255,0.05)]">
+<div class="flex items-center gap-12">
+<span class="text-2xl font-bold bg-gradient-to-r from-[#bc9dff] to-[#00e3fd] bg-clip-text text-transparent font-['Space_Grotesk'] tracking-tight">The Neural Playground</span>
+<nav class="hidden md:flex gap-8 items-center h-full">
+<a class="text-[#bc9dff] border-b-2 border-[#bc9dff] pb-1 font-['Space_Grotesk'] tracking-tight transition-all duration-300" href="#">Dashboard</a>
+<a class="text-[#ecedf6] opacity-70 hover:opacity-100 font-['Space_Grotesk'] tracking-tight transition-opacity duration-300" href="#">Workspace</a>
+<a class="text-[#ecedf6] opacity-70 hover:opacity-100 font-['Space_Grotesk'] tracking-tight transition-opacity duration-300" href="#">Analytics</a>
+<a class="text-[#ecedf6] opacity-70 hover:opacity-100 font-['Space_Grotesk'] tracking-tight transition-opacity duration-300" href="#">Community</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-[#22262f] rounded-lg transition-colors duration-300">
+<span class="material-symbols-outlined text-[#bc9dff]">sensors</span>
+</button>
+<button class="p-2 hover:bg-[#22262f] rounded-lg transition-colors duration-300">
+<span class="material-symbols-outlined text-[#bc9dff]">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-outline-variant border-opacity-30">
+<img class="w-full h-full object-cover" data-alt="Portrait of a creative technologist with a clean, high-tech aesthetic and moody blue studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY_c8orysl7fez2hw8uCK4g9bjij-OZ8idK433q7Eln8de4DdRrPF3NH2pRdmcvxfo_K66JjISSHv4vdVQnfQkf6ZbkRLycBPFXvRKhexMUZvq1uvcPH0FM_WK98wWiEOCIcf_33Bc3fc_ZLXYf3sSt-gqbW23cnXyfQjIsLkxHyTiWe4ZN7UW9XKxOT6LKRuBf3JjpGJrL2-wJ2KXDS6iaCnYfo3ei7-ZoVYAM-kvDVLIMiDAviu3muK0KpQ6mkOdNUXKcuFWHt6b"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-[#10131a] flex flex-col py-6">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest text-[#00e3fd] font-bold">Neural Lab v1</span>
+</div>
+<p class="text-xs text-on-surface-variant font-['Manrope'] opacity-60">Connected: Headset-A2</p>
+</div>
+<nav class="flex-1 space-y-1 px-3">
+<a class="flex items-center gap-4 px-4 py-3 bg-[#22262f] text-[#bc9dff] shadow-[inset_4px_0_0_0_#bc9dff] transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-lg">vibration</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest font-bold">Playground</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#ecedf6] opacity-60 hover:bg-[#161a21] hover:opacity-100 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-[#00e3fd]">insights</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest font-medium">EEG Monitor</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#ecedf6] opacity-60 hover:bg-[#161a21] hover:opacity-100 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-[#00e3fd]">inventory_2</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest font-medium">Library</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#ecedf6] opacity-60 hover:bg-[#161a21] hover:opacity-100 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-[#00e3fd]">history</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest font-medium">History</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 text-[#ecedf6] opacity-60 hover:bg-[#161a21] hover:opacity-100 transition-all duration-200 group" href="#">
+<span class="material-symbols-outlined text-lg group-hover:text-[#00e3fd]">tune</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest font-medium">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-4 mb-8">
+<button class="w-full py-3 bg-gradient-to-br from-primary to-primary-dim text-on-primary-fixed rounded-lg font-bold text-xs uppercase tracking-widest shadow-lg hover:brightness-110 transition-all">
+                Sync Data
+            </button>
+</div>
+<div class="px-3 space-y-1">
+<a class="flex items-center gap-4 px-4 py-2 text-[#ecedf6] opacity-60 hover:text-[#00e3fd] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">help_outline</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest">Support</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-2 text-[#ecedf6] opacity-60 hover:text-[#00e3fd] transition-all" href="#">
+<span class="material-symbols-outlined text-lg">logout</span>
+<span class="font-['Manrope'] text-sm uppercase tracking-widest">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="pl-64 pt-16 h-screen w-full flex overflow-hidden">
+<!-- Left Column: Geometric Canvas -->
+<section class="flex-1 relative flex flex-col bg-surface overflow-hidden">
+<div class="absolute inset-0 neural-grid"></div>
+<!-- Canvas Interaction Area -->
+<div class="flex-1 relative overflow-hidden flex items-center justify-center">
+<!-- Glowing Shapes -->
+<div class="absolute top-1/4 left-1/4 w-32 h-32 rounded-full border-2 border-primary bg-primary/10 neon-glow-primary backdrop-blur-sm cursor-move"></div>
+<div class="absolute top-1/2 right-1/3 w-24 h-24 border-2 border-secondary bg-secondary/10 neon-glow-secondary backdrop-blur-sm transform rotate-45 cursor-move"></div>
+<div class="absolute bottom-1/4 left-1/2 w-40 h-24 border-2 border-tertiary bg-tertiary/10 shadow-[0_0_20px_rgba(199,153,255,0.15)] backdrop-blur-sm cursor-move"></div>
+<div class="absolute top-1/3 right-1/4 w-0 h-0 border-l-[40px] border-l-transparent border-r-[40px] border-r-transparent border-bottom-[70px] border-b-primary-container/40 flex items-center justify-center">
+<div class="w-0 h-0 border-l-[38px] border-l-transparent border-r-[38px] border-r-transparent border-b-[66px] border-b-primary-container/80 translate-y-[-2px]"></div>
+</div>
+<!-- Subtle Center Crosshair -->
+<div class="absolute w-8 h-px bg-outline-variant opacity-20"></div>
+<div class="absolute h-8 w-px bg-outline-variant opacity-20"></div>
+</div>
+<!-- Floating Bottom Toolbar -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 p-2 rounded-2xl glass-panel border border-outline-variant/10 shadow-2xl z-20">
+<button class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-surface-container-highest hover:bg-surface-bright text-on-surface transition-colors group">
+<span class="material-symbols-outlined text-secondary">add_circle</span>
+<span class="text-xs font-bold uppercase tracking-wider">Add Shape</span>
+</button>
+<div class="w-px h-6 bg-outline-variant/20 mx-1"></div>
+<button class="p-2.5 rounded-xl hover:bg-error/10 text-on-surface-variant hover:text-error transition-all" title="Clear Canvas">
+<span class="material-symbols-outlined">layers_clear</span>
+</button>
+<button class="p-2.5 rounded-xl hover:bg-secondary/10 text-on-surface-variant hover:text-secondary transition-all" title="Reset Positions">
+<span class="material-symbols-outlined">restart_alt</span>
+</button>
+<button class="p-2.5 rounded-xl hover:bg-primary/10 text-on-surface-variant hover:text-primary transition-all" title="Export Data">
+<span class="material-symbols-outlined">ios_share</span>
+</button>
+</div>
+</section>
+<!-- Right Column: Neural Analytics Panel -->
+<section class="w-96 bg-surface-container-low border-l border-outline-variant/10 flex flex-col p-6 gap-6 overflow-y-auto">
+<div>
+<h2 class="font-headline text-xl font-bold tracking-tight mb-1">Neural Analytics</h2>
+<p class="text-xs text-on-surface-variant font-medium opacity-60">Real-time Kinesthetic Feedback</p>
+</div>
+<!-- EEG Graph Container -->
+<div class="glass-panel border border-outline-variant/10 rounded-2xl p-4 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="text-[10px] uppercase tracking-widest font-bold text-secondary">Wave Frequency</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold">LIVE</span>
+</div>
+<div class="h-40 w-full relative overflow-hidden flex items-center">
+<!-- SVG Wave Sim -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 400 100">
+<!-- Gamma -->
+<path d="M0,50 Q25,20 50,50 T100,50 T150,50 T200,50 T250,50 T300,50 T350,50 T400,50" fill="none" opacity="0.6" stroke="#bc9dff" stroke-dasharray="2 2" stroke-width="1.5"></path>
+<!-- Beta -->
+<path d="M0,50 Q10,70 20,50 T40,50 T60,50 T80,50 T100,50 T120,50 T140,50 T160,50 T180,50 T200,50" fill="none" stroke="#00e3fd" stroke-width="2"></path>
+<!-- Alpha -->
+<path d="M0,50 C50,80 150,20 200,50 S350,80 400,50" fill="none" opacity="0.4" stroke="#c799ff" stroke-width="1"></path>
+</svg>
+<!-- Pulse indicator -->
+<div class="absolute right-0 w-2 h-full bg-gradient-to-l from-secondary/20 to-transparent"></div>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-highest/40 p-2 rounded-lg text-center">
+<p class="text-[10px] opacity-60 uppercase font-bold">Alpha</p>
+<p class="text-sm font-headline font-bold text-primary">12.4Hz</p>
+</div>
+<div class="bg-surface-container-highest/40 p-2 rounded-lg text-center border-b-2 border-secondary">
+<p class="text-[10px] opacity-60 uppercase font-bold">Beta</p>
+<p class="text-sm font-headline font-bold text-secondary">24.8Hz</p>
+</div>
+<div class="bg-surface-container-highest/40 p-2 rounded-lg text-center">
+<p class="text-[10px] opacity-60 uppercase font-bold">Gamma</p>
+<p class="text-sm font-headline font-bold text-tertiary">41.2Hz</p>
+</div>
+</div>
+</div>
+<!-- Kinetic Data Readouts -->
+<div class="space-y-4">
+<h3 class="text-xs uppercase tracking-widest font-bold text-on-surface-variant opacity-80">Object Properties</h3>
+<div class="space-y-2">
+<div class="flex justify-between items-center p-3 rounded-xl bg-surface-container-high/50 hover:bg-surface-container-high transition-colors group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">circle</span>
+<span class="text-sm font-medium">Sphere_01</span>
+</div>
+<span class="text-xs font-headline opacity-60">X: 142.0 Y: 44.5</span>
+</div>
+<div class="flex justify-between items-center p-3 rounded-xl bg-surface-container-high/50 hover:bg-surface-container-high transition-colors group cursor-default">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary group-hover:scale-110 transition-transform">square</span>
+<span class="text-sm font-medium">Cube_04</span>
+</div>
+<span class="text-xs font-headline opacity-60">X: 521.2 Y: 89.1</span>
+</div>
+<div class="flex justify-between items-center p-3 rounded-xl bg-surface-container-high/50 hover:bg-surface-container-high transition-colors group cursor-default border-l-2 border-primary/40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary group-hover:scale-110 transition-transform">change_history</span>
+<span class="text-sm font-medium">Prism_Active</span>
+</div>
+<span class="text-xs font-headline text-primary-container font-bold">Velocity: 2.4 m/s</span>
+</div>
+</div>
+</div>
+<!-- Signal Strength / Health -->
+<div class="mt-auto pt-6">
+<div class="p-4 rounded-2xl bg-gradient-to-br from-surface-container-highest to-surface-container border border-outline-variant/10">
+<div class="flex items-center justify-between mb-4">
+<span class="text-xs font-bold uppercase tracking-wider">Neural Link Quality</span>
+<span class="text-secondary text-sm font-headline">98%</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full w-[98%] bg-gradient-to-r from-primary to-secondary rounded-full"></div>
+</div>
+<p class="text-[10px] mt-3 text-on-surface-variant leading-relaxed">
+                        Signal stable. Latency measured at <span class="text-secondary">4ms</span>. Synaptic interference detected at minimal levels.
+                    </p>
+</div>
+</div>
+</section>
+</main>
+<!-- Background Decorative Elements -->
+<div class="fixed top-0 left-0 w-full h-full pointer-events-none -z-10">
+<div class="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary opacity-5 blur-[120px] rounded-full"></div>
+<div class="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-secondary opacity-5 blur-[120px] rounded-full"></div>
+</div>
+</body></html>

@@ -59,25 +59,15 @@ Upside Down Labs EEG Setup:
 Follow the 10-20 international system, focusing on channels most informative for motor imagery:
 
 ```
-Prefrontal (Motor Planning):
-  Fp1 (Left)  ←——→  Fp2 (Right)
-
-Frontal Motor (Planning + ERD):
-  F3 (Left)   ←——→  F4 (Right)
-
-Central (Primary Motor Cortex — most important):
-  C3 (Left)   ←——→  Cz  ←——→  C4 (Right)
-
-Parietal (Sensorimotor Integration):
-  P3 (Left)   ←——→  Pz  ←——→  P4 (Right)
-
-Reference: A1 or A2 (earlobe, linked)
-Ground:    Fpz (forehead midline)
+Central (Primary Motor Cortex):
+  IN+ (Left side):   C3
+  IN- (Right side):  C4
+  
+Reference/Ground:    Fpz (forehead midline) or Earlobe
 
 Motor Imagery Pattern:
-  LEFT hand  → ERD at F3, C3, P3
-  RIGHT hand → ERD at F4, C4, P4
-  Cz, Pz:   Active for both (bilateral)
+  LEFT hand  → ERD at C3
+  RIGHT hand → ERD at C4
 ```
 
 ---
@@ -270,7 +260,7 @@ session_01_meta.json:
   "date": "2025-09-15",
   "fs": 250,
   "n_trials": 80,
-  "electrode_placement": "F3,F4,C3,Cz,C4,P3,P4",
+  "electrode_placement": "C3,C4,Fpz",
   "signal_snr_db": 14.2,
   "notes": "Good signal quality, subject relaxed"
 }

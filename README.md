@@ -120,7 +120,7 @@ Millions of paralyzed individuals worldwide lack access to assistive technology:
 | Component | Purpose | Est. Cost |
 |-----------|---------|-----------|
 | BioAmp EXG Pill | Biosignal amplifier (µV-range) | Included in kit |
-| Gel electrodes (×8) | Scalp EEG contact | Included in kit |
+| Gel electrodes (×3) | Scalp EEG contact | Included in kit |
 | Reference electrode (clip) | Earlobe reference | Included in kit |
 | Ground electrode (clip) | Earlobe / Fpz ground | Included in kit |
 | Snap-to-lead wires | Electrode to amplifier | Included in kit |
@@ -134,13 +134,9 @@ Millions of paralyzed individuals worldwide lack access to assistive technology:
 Follow the **10-20 international system**, focusing on motor cortex channels:
 
 ```
-Prefrontal:  Fp1 ←──→ Fp2      (motor planning)
-Frontal:     F3  ←──→ F4       (left/right motor planning)
-Central:     C3  ←──→ Cz ←──→ C4   (primary motor cortex — KEY)
-Parietal:    P3  ←──→ Pz ←──→ P4   (sensory integration)
-
-Reference:   A1 or A2 (earlobe)
-Ground:      Fpz (forehead midline)
+IN+ (Signal): C3 ( Left Motor Cortex)
+IN- (Signal): C4 ( Right Motor Cortex)
+Ground:      Fpz (Forehead midline) or Earlobe
 ```
 
 ---

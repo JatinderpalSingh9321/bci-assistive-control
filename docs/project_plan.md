@@ -126,14 +126,12 @@ bci-assistive-control/
 **Electrode Placement (10-20 System):**
 
 ```
-Prefrontal (Planning):    Fp1 ←——→ Fp2
-Motor Planning:           F3  ←——→ F4
-Primary Motor Cortex:            Cz
-Sensorimotor Integration: P3  ←——→ P4
+Primary Motor Cortex: C3 (Left) and C4 (Right)
+Reference/Ground:     Fpz (Forehead) or Earlobe
 
 Motor Imagery Pattern:
-  LEFT hand imagery  → F3, Cz, P3 show ERD
-  RIGHT hand imagery → F4, Cz, P4 show ERD
+  LEFT hand imagery  → C3 shows ERD
+  RIGHT hand imagery → C4 shows ERD
 ```
 
 **Daily Calibration Checklist:**

@@ -48,7 +48,7 @@ Electroencephalography (EEG) measures the electrical activity of the brain via e
 - **Event-Related Desynchronization (ERD):** A decrease in alpha (8–12 Hz) and beta (12–30 Hz) power over the contralateral motor cortex during imagined movement.
 - **Event-Related Synchronization (ERS):** A rebound increase in beta power after the imagined movement ends.
 
-These signatures are spatially distinct: imagining left-hand movement activates right-hemisphere channels (F4, C4, P4), while right-hand imagery activates left-hemisphere channels (F3, C3, P3). This spatial and spectral separability is the neurophysiological foundation of motor imagery BCI.
+These signatures are spatially distinct: imagining left-hand movement produces ERD on the contralateral right motor cortex (C4), while right-hand imagery produces ERD on the contralateral left motor cortex (C3). This spatial and spectral separability is the neurophysiological foundation of motor imagery BCI.
 
 ### 4.2 Why Upside Down Labs?
 
@@ -76,7 +76,7 @@ The proposed system is organized into three tightly coupled layers:
 
 ### Layer 1: Signal Acquisition & Preprocessing
 
-**Hardware:** Upside Down Labs EEG kit (electrodes placed at Fp1, Fp2, F3, F4, Cz, P3, P4 following the 10-20 international system).
+**Hardware:** Upside Down Labs EEG kit (Single-channel: electrodes placed at C3, C4, and Fpz following the 10-20 international system).
 
 **Software Pipeline:**
 1. Raw EEG streaming via serial/USB interface to Python.

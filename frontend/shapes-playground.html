@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Shapes Playground — Drag, rotate, and interact with geometric shapes.">
+    <title>Shapes Playground — Interactive Canvas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ───────── Reset & Tokens ───────── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-deep:    #0b0d17;
+            --bg-surface: #111527;
+            --bg-card:    rgba(255,255,255,0.04);
+            --border:     rgba(255,255,255,0.08);
+            --text-1:     #e8eaf6;
+            --text-2:     #9ea3c2;
+            --accent:     #7c4dff;
+            --accent-glow:rgba(124, 77, 255, .35);
+            --pink:       #ff4081;
+            --cyan:       #18ffff;
+            --amber:      #ffab00;
+            --lime:       #76ff03;
+            --teal:       #1de9b6;
+            --orange:     #ff6e40;
+            --radius:     14px;
+            --font:       'Inter', system-ui, sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: var(--font);
+            background: var(--bg-deep);
+            color: var(--text-1);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* ───────── Layout ───────── */
+        #app {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ─── Sidebar ─── */
+        #sidebar {
+            width: 280px;
+            min-width: 280px;
+            background: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        #sidebar-header {
+            padding: 28px 24px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        #sidebar-header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -.3px;
+        }
+
+        #sidebar-header p {
+            font-size: .78rem;
+            color: var(--text-2);
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            font-size: .65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.4px;
+            color: var(--text-2);
+            padding: 20px 24px 10px;
+        }
+
+        /* shape buttons grid */
+        #shape-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 24px 20px;
+        }
+
+        .shape-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px 8px;
+            border-radius: var(--radius);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-1);
+            cursor: pointer;
+            transition: all .25s ease;
+            font-family: var(--font);
+            font-size: .72rem;
+            font-weight: 500;
+        }
+
+        .shape-btn:hover {
+            background: rgba(124,77,255,.12);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(124,77,255,.15);
+        }
+
+        .shape-btn svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        /* ─── Actions ─── */
+        #actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 0 24px 24px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-2);
+            cursor: pointer;
+            font-family: var(--font);
+            font-size: .78rem;
+            transition: all .2s ease;
+        }
+
+        .action-btn:hover {
+            color: var(--text-1);
+            background: rgba(255,64,129,.08);
+            border-color: var(--pink);
+        }
+
+        .action-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        /* ─── Info Panel ─── */
+        #info-panel {
+            margin-top: auto;
+            padding: 20px 24px;
+            border-top: 1px solid var(--border);
+            font-size: .72rem;
+            color: var(--text-2);
+            line-height: 1.65;
+        }
+
+        #info-panel .stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        #info-panel .stat span:last-child {
+            color: var(--text-1);
+            font-weight: 600;
+        }
+
+        /* ───────── Canvas Area ───────── */
+        #canvas-area {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(124,77,255,.06) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255,64,129,.05) 0%, transparent 50%),
+                var(--bg-deep);
+        }
+
+        /* dot grid */
+        #canvas-area::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(rgba(255,255,255,.045) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+        }
+
+        /* ─── Shapes ─── */
+        .shape {
+            position: absolute;
+            cursor: grab;
+            transition: box-shadow .2s ease, filter .2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .shape:hover {
+            filter: brightness(1.15);
+        }
+
+        .shape.dragging {
+            cursor: grabbing;
+            z-index: 1000 !important;
+            filter: brightness(1.25);
+        }
+
+        .shape.selected {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+
+        /* individual shape types */
+        .shape-circle {
+            border-radius: 50%;
+        }
+
+        .shape-square {
+            border-radius: 12px;
+        }
+
+        .shape-triangle {
+            background: transparent !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+
+        .shape-diamond {
+            border-radius: 8px;
+        }
+
+        .shape-pentagon, .shape-hexagon, .shape-star, .shape-heart {
+            background: transparent !important;
+        }
+
+        /* ─── Tooltip ─── */
+        #tooltip {
+            position: fixed;
+            padding: 8px 14px;
+            border-radius: 8px;
+            background: rgba(17,21,39,.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            font-size: .7rem;
+            color: var(--text-2);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .15s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        #tooltip.visible { opacity: 1; }
+
+        /* ─── Context Menu ─── */
+        #context-menu {
+            position: fixed;
+            min-width: 180px;
+            background: rgba(17,21,39,.96);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 6px;
+            z-index: 9999;
+            display: none;
+            box-shadow: 0 16px 48px rgba(0,0,0,.5);
+        }
+
+        #context-menu.visible { display: block; }
+
+        .ctx-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-size: .78rem;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: all .15s ease;
+        }
+
+        .ctx-item:hover {
+            background: rgba(124,77,255,.12);
+            color: var(--text-1);
+        }
+
+        .ctx-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 8px;
+        }
+
+        /* ─── Resize Handle ─── */
+        .resize-handle {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--accent);
+            border: 2px solid var(--bg-deep);
+            border-radius: 50%;
+            bottom: -6px;
+            right: -6px;
+            cursor: nwse-resize;
+            opacity: 0;
+            transition: opacity .2s;
+            z-index: 10;
+        }
+
+        .shape.selected .resize-handle { opacity: 1; }
+
+        /* ─── Empty-state ─── */
+        #empty-state {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            opacity: .45;
+            transition: opacity .3s;
+        }
+
+        #empty-state.hidden { opacity: 0; }
+
+        #empty-state svg { width: 64px; height: 64px; margin-bottom: 18px; }
+        #empty-state p { font-size: .85rem; color: var(--text-2); }
+
+        /* ─── Snackbar ─── */
+        #snackbar {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            padding: 12px 24px;
+            border-radius: 12px;
+            background: rgba(17,21,39,.94);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            font-size: .78rem;
+            color: var(--text-1);
+            z-index: 9999;
+            transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .35s;
+            opacity: 0;
+        }
+
+        #snackbar.visible {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* ─── Header Strip ─── */
+        #canvas-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            background: rgba(11,13,23,.65);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 5;
+        }
+
+        #canvas-header span {
+            font-size: .72rem;
+            color: var(--text-2);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(124,77,255,.12);
+            color: var(--accent);
+            font-size: .68rem;
+            font-weight: 600;
+        }
+
+        .badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        /* ─── Animations ─── */
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shape.pop-in {
+            animation: popIn .4s cubic-bezier(.22,1,.36,1) forwards;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        /* ════════════ BCI Dashboard Styles ════════════ */
+        #bci-sidebar {
+            width: 320px;
+            min-width: 320px;
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            overflow-y: auto;
+        }
+        #bci-sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #bci-sidebar-header h2 { font-size: 1rem; font-weight: 600; }
+        #statusBadge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+            border-radius: 20px; font-size: .65rem; font-weight: 600; font-family: monospace;
+            background: rgba(233, 69, 96, 0.1); color: #e94560; border: 1px solid rgba(233, 69, 96, 0.25);
+        }
+        #statusBadge.connected {
+            background: rgba(16, 232, 126, 0.12); color: #10e87e; border-color: rgba(16, 232, 126, 0.25);
+        }
+        .status-dot { width: 6px; height: 6px; border-radius: 50%; opacity: 0.8; }
+        .disconnected .status-dot { background: #e94560; }
+        .connected .status-dot { background: #10e87e; animation: bci-pulse 2s infinite ease-in-out; }
+        @keyframes bci-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.85); } }
+
+        .bci-section { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+        .pred-label {
+            font-size: 42px; font-weight: 700; text-align: center; letter-spacing: -1px;
+            margin: 10px 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .pred-label.idle { color: var(--text-2); font-size: 24px; }
+        .pred-label.LEFT { color: var(--cyan); text-shadow: 0 0 20px rgba(24, 255, 255, 0.3); }
+        .pred-label.RIGHT { color: var(--orange); text-shadow: 0 0 20px rgba(255, 110, 64, 0.3); }
+
+        .bci-row { display: flex; justify-content: space-between; font-size: .75rem; color: var(--text-2); margin-top: 6px;}
+        .bci-val { color: var(--text-1); font-weight: 600; font-family: monospace; }
+        
+        #bciCanvas {
+            width: 100%; height: 100px; border-radius: var(--radius);
+            background: rgba(0, 0, 0, 0.25); border: 1px solid var(--border); margin-top: 12px;
+        }
+
+        .bci-btn {
+            width: 100%; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border);
+            background: var(--bg-card); color: var(--text-1); font-weight: 600; cursor: pointer;
+            transition: all .2s; margin-top: 10px;
+        }
+        .bci-btn:hover { background: rgba(255,255,255,0.08); }
+        .bci-btn.active { background: var(--accent); border-color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- ──── Sidebar ──── -->
+    <aside id="sidebar">
+        <div id="sidebar-header">
+            <h1>✦ Shapes Playground</h1>
+            <p>Click a shape below to add it to the canvas. Drag to move, right-click for options.</p>
+        </div>
+
+        <div class="section-title">Add Shapes</div>
+        <div id="shape-grid">
+            <button class="shape-btn" id="btn-circle" onclick="addShape('circle')">
+                <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#7c4dff" stroke-width="2"/></svg>
+                Circle
+            </button>
+            <button class="shape-btn" id="btn-square" onclick="addShape('square')">
+                <svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="4" fill="none" stroke="#ff4081" stroke-width="2"/></svg>
+                Square
+            </button>
+            <button class="shape-btn" id="btn-triangle" onclick="addShape('triangle')">
+                <svg viewBox="0 0 40 40"><polygon points="20,4 38,36 2,36" fill="none" stroke="#18ffff" stroke-width="2"/></svg>
+                Triangle
+            </button>
+            <button class="shape-btn" id="btn-diamond" onclick="addShape('diamond')">
+                <svg viewBox="0 0 40 40"><polygon points="20,2 38,20 20,38 2,20" fill="none" stroke="#ffab00" stroke-width="2"/></svg>
+                Diamond
+            </button>
+            <button class="shape-btn" id="btn-pentagon" onclick="addShape('pentagon')">
+                <svg viewBox="0 0 40 40"><polygon points="20,3 37,15 31,35 9,35 3,15" fill="none" stroke="#76ff03" stroke-width="2"/></svg>
+                Pentagon
+            </button>
+            <button class="shape-btn" id="btn-hexagon" onclick="addShape('hexagon')">
+                <svg viewBox="0 0 40 40"><polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="none" stroke="#1de9b6" stroke-width="2"/></svg>
+                Hexagon
+            </button>
+            <button class="shape-btn" id="btn-star" onclick="addShape('star')">
+                <svg viewBox="0 0 40 40"><polygon points="20,2 25,15 38,15 27,24 31,37 20,29 9,37 13,24 2,15 15,15" fill="none" stroke="#ff6e40" stroke-width="2"/></svg>
+                Star
+            </button>
+            <button class="shape-btn" id="btn-ellipse" onclick="addShape('ellipse')">
+                <svg viewBox="0 0 40 40"><ellipse cx="20" cy="20" rx="18" ry="12" fill="none" stroke="#e040fb" stroke-width="2"/></svg>
+                Ellipse
+            </button>
+        </div>
+
+        <div class="section-title">Actions</div>
+        <div id="actions">
+            <button class="action-btn" id="btn-clear" onclick="clearCanvas()">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M5 4V2.5A.5.5 0 015.5 2h5a.5.5 0 01.5.5V4M6.5 7v5M9.5 7v5M3.5 4l.7 9.1a1 1 0 001 .9h5.6a1 1 0 001-.9L12.5 4"/></svg>
+                Clear Canvas
+            </button>
+            <button class="action-btn" id="btn-randomize" onclick="randomBurst()">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 10l3-3 3 3 4-6"/><path d="M11 4h3v3"/></svg>
+                Random Burst (5)
+            </button>
+            <button class="action-btn" id="btn-shuffle-colors" onclick="shuffleColors()">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="5" cy="5" r="2.5"/><circle cx="11" cy="11" r="2.5"/><path d="M2 14L14 2"/></svg>
+                Shuffle Colors
+            </button>
+        </div>
+
+        <div id="info-panel">
+            <div class="stat"><span>Shapes on canvas</span><span id="stat-count">0</span></div>
+            <div class="stat"><span>Mouse X</span><span id="stat-mx">—</span></div>
+            <div class="stat"><span>Mouse Y</span><span id="stat-my">—</span></div>
+        </div>
+    </aside>
+
+    <!-- ──── Canvas ──── -->
+    <main id="canvas-area" oncontextmenu="return false;">
+        <div id="canvas-header">
+            <span>Canvas</span>
+            <span class="badge">Interactive</span>
+        </div>
+
+        <div id="empty-state">
+            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="8" y="8" width="48" height="48" rx="12" stroke-dasharray="4 4"/>
+                <circle cx="32" cy="32" r="10"/>
+                <path d="M32 22v20M22 32h20"/>
+            </svg>
+            <p>Click a shape on the left to begin</p>
+        </div>
+    </main>
+
+    <!-- ──── BCI Sidebar ──── -->
+    <aside id="bci-sidebar">
+        <div id="bci-sidebar-header">
+            <h2>🧠 Dashboard</h2>
+            <div id="statusBadge" class="disconnected"><span class="status-dot"></span><span id="statusText">Disconnected</span></div>
+        </div>
+
+        <div class="bci-section">
+            <div class="section-title" style="padding:0 0 10px 0;">Live Prediction</div>
+            <div id="predictionLabel" class="pred-label idle">Waiting...</div>
+            <div class="bci-row"><span>Confidence:</span><span id="metaConfidence" class="bci-val">—</span></div>
+            <div class="bci-row"><span>Latency:</span><span id="metaLatency" class="bci-val">—</span></div>
+        </div>
+
+        <div class="bci-section">
+            <div class="section-title" style="padding:0 0 10px 0;">EEG Signal</div>
+            <canvas id="bciCanvas"></canvas>
+            <div class="bci-row" style="margin-top:12px;"><span>Predictions:</span><span id="statTotal" class="bci-val">0</span></div>
+            <div class="bci-row"><span>Avg Conf:</span><span id="statAvgConf" class="bci-val">0%</span></div>
+        </div>
+
+        <div class="bci-section" style="border-bottom:none;">
+            <button class="bci-btn active" id="btnSimulate" onclick="toggleSimulation()">▶ Start Simulation</button>
+            <button class="bci-btn" id="btnClearBCI" onclick="clearBCISession()">↺ Clear Session</button>
+        </div>
+    </aside>
+
+</div>
+
+<!-- Tooltip & Context Menu -->
+<div id="tooltip"></div>
+<div id="context-menu">
+    <div class="ctx-item" onclick="duplicateSelected()">⧉ Duplicate</div>
+    <div class="ctx-item" onclick="bringToFront()">↑ Bring to Front</div>
+    <div class="ctx-item" onclick="sendToBack()">↓ Send to Back</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" onclick="changeColor()">🎨 Random Color</div>
+    <div class="ctx-item" onclick="growShape()">⊕ Grow</div>
+    <div class="ctx-item" onclick="shrinkShape()">⊖ Shrink</div>
+    <div class="ctx-divider"></div>
+    <div class="ctx-item" style="color:#ff4081;" onclick="deleteSelected()">✕ Delete</div>
+</div>
+<div id="snackbar"></div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   STATE
+   ═══════════════════════════════════════════════ */
+const canvasArea  = document.getElementById('canvas-area');
+const emptyState  = document.getElementById('empty-state');
+const tooltip     = document.getElementById('tooltip');
+const ctxMenu     = document.getElementById('context-menu');
+const snackbar    = document.getElementById('snackbar');
+const statCount   = document.getElementById('stat-count');
+const statMx      = document.getElementById('stat-mx');
+const statMy      = document.getElementById('stat-my');
+
+let shapes          = [];
+let selectedShape   = null;
+let zCounter        = 1;
+let dragState       = null;   // { el, offsetX, offsetY }
+let resizeState     = null;
+let snackTimeout    = null;
+
+const COLORS = [
+    '#7c4dff', '#ff4081', '#18ffff', '#ffab00',
+    '#76ff03', '#1de9b6', '#ff6e40', '#e040fb',
+    '#448aff', '#ff5252', '#69f0ae', '#ffd740',
+];
+
+function rnd(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function pick(arr)  { return arr[rnd(0, arr.length - 1)]; }
+
+/* ═══════════════════════════════════════════════
+   SHAPE CREATION
+   ═══════════════════════════════════════════════ */
+function addShape(type, x, y, size, color) {
+    const area   = canvasArea.getBoundingClientRect();
+    const s      = size  || rnd(60, 110);
+    const cx     = x     ?? rnd(80, area.width  - 80);
+    const cy     = y     ?? rnd(100, area.height - 80);
+    const c      = color || pick(COLORS);
+    const id     = 'shape-' + Date.now() + '-' + rnd(0,9999);
+
+    const el = document.createElement('div');
+    el.className = 'shape pop-in';
+    el.dataset.type  = type;
+    el.dataset.id    = id;
+    el.dataset.color = c;
+    el.style.zIndex  = zCounter++;
+    el.style.left    = cx + 'px';
+    el.style.top     = cy + 'px';
+
+    // Render shape
+    renderShape(el, type, s, c);
+
+    // Resize handle
+    const handle = document.createElement('div');
+    handle.className = 'resize-handle';
+    el.appendChild(handle);
+
+    canvasArea.appendChild(el);
+    shapes.push({ id, el, type, size: s, color: c });
+    updateStats();
+
+    // Events
+    el.addEventListener('mousedown', onShapeMouseDown);
+    el.addEventListener('contextmenu', onShapeContext);
+    handle.addEventListener('mousedown', onResizeStart);
+
+    // Hover tooltip
+    el.addEventListener('mouseenter', () => {
+        showTooltip(`${type}  ·  ${s}px  ·  ${c}`);
+    });
+    el.addEventListener('mouseleave', hideTooltip);
+
+    emptyState.classList.add('hidden');
+    return el;
+}
+
+function renderShape(el, type, size, color) {
+    const s = size;
+    switch (type) {
+        case 'circle':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                borderRadius: '50%',
+                background: `radial-gradient(circle at 35% 35%, ${lighten(color,.3)}, ${color})`,
+                boxShadow: `0 8px 32px ${color}55`,
+            });
+            el.innerHTML = '';
+            break;
+
+        case 'square':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                borderRadius: '14px',
+                background: `linear-gradient(135deg, ${lighten(color,.25)}, ${color})`,
+                boxShadow: `0 8px 32px ${color}55`,
+            });
+            el.innerHTML = '';
+            break;
+
+        case 'triangle':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                background: 'transparent',
+                boxShadow: 'none',
+                borderRadius: '0',
+            });
+            el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">
+                <defs><linearGradient id="tg-${el.dataset.id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${lighten(color,.3)}"/>
+                    <stop offset="100%" stop-color="${color}"/>
+                </linearGradient>
+                <filter id="ts-${el.dataset.id}"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="${color}" flood-opacity=".4"/></filter></defs>
+                <polygon points="50,8 95,92 5,92" fill="url(#tg-${el.dataset.id})" filter="url(#ts-${el.dataset.id})"/>
+            </svg>`;
+            break;
+
+        case 'diamond':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                background: 'transparent',
+                boxShadow: 'none', borderRadius: '0',
+            });
+            el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">
+                <defs><linearGradient id="dg-${el.dataset.id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${lighten(color,.3)}"/>
+                    <stop offset="100%" stop-color="${color}"/>
+                </linearGradient>
+                <filter id="ds-${el.dataset.id}"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="${color}" flood-opacity=".4"/></filter></defs>
+                <polygon points="50,5 95,50 50,95 5,50" fill="url(#dg-${el.dataset.id})" filter="url(#ds-${el.dataset.id})" rx="6"/>
+            </svg>`;
+            break;
+
+        case 'pentagon':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                background: 'transparent',
+                boxShadow: 'none', borderRadius: '0',
+            });
+            el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">
+                <defs><linearGradient id="pg-${el.dataset.id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${lighten(color,.3)}"/>
+                    <stop offset="100%" stop-color="${color}"/>
+                </linearGradient>
+                <filter id="ps-${el.dataset.id}"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="${color}" flood-opacity=".4"/></filter></defs>
+                <polygon points="50,5 97,38 79,92 21,92 3,38" fill="url(#pg-${el.dataset.id})" filter="url(#ps-${el.dataset.id})"/>
+            </svg>`;
+            break;
+
+        case 'hexagon':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                background: 'transparent',
+                boxShadow: 'none', borderRadius: '0',
+            });
+            el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">
+                <defs><linearGradient id="hg-${el.dataset.id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${lighten(color,.3)}"/>
+                    <stop offset="100%" stop-color="${color}"/>
+                </linearGradient>
+                <filter id="hs-${el.dataset.id}"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="${color}" flood-opacity=".4"/></filter></defs>
+                <polygon points="50,3 93,27 93,73 50,97 7,73 7,27" fill="url(#hg-${el.dataset.id})" filter="url(#hs-${el.dataset.id})"/>
+            </svg>`;
+            break;
+
+        case 'star':
+            Object.assign(el.style, {
+                width: s + 'px', height: s + 'px',
+                background: 'transparent',
+                boxShadow: 'none', borderRadius: '0',
+            });
+            el.innerHTML = `<svg viewBox="0 0 100 100" width="${s}" height="${s}">
+                <defs><linearGradient id="sg-${el.dataset.id}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="${lighten(color,.3)}"/>
+                    <stop offset="100%" stop-color="${color}"/>
+                </linearGradient>
+                <filter id="ss-${el.dataset.id}"><feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="${color}" flood-opacity=".4"/></filter></defs>
+                <polygon points="50,5 62,38 97,38 68,60 79,93 50,72 21,93 32,60 3,38 38,38" fill="url(#sg-${el.dataset.id})" filter="url(#ss-${el.dataset.id})"/>
+            </svg>`;
+            break;
+
+        case 'ellipse':
+            Object.assign(el.style, {
+                width:  (s * 1.6) + 'px',
+                height: s + 'px',
+                borderRadius: '50%',
+                background: `radial-gradient(ellipse at 35% 35%, ${lighten(color,.3)}, ${color})`,
+                boxShadow: `0 8px 32px ${color}55`,
+            });
+            el.innerHTML = '';
+            break;
+    }
+
+    // Re-add resize handle
+    let rh = el.querySelector('.resize-handle');
+    if (!rh) {
+        rh = document.createElement('div');
+        rh.className = 'resize-handle';
+        rh.addEventListener('mousedown', onResizeStart);
+    }
+    el.appendChild(rh);
+}
+
+function lighten(hex, amount) {
+    let r = parseInt(hex.slice(1,3), 16);
+    let g = parseInt(hex.slice(3,5), 16);
+    let b = parseInt(hex.slice(5,7), 16);
+    r = Math.min(255, Math.round(r + (255 - r) * amount));
+    g = Math.min(255, Math.round(g + (255 - g) * amount));
+    b = Math.min(255, Math.round(b + (255 - b) * amount));
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+
+/* ═══════════════════════════════════════════════
+   DRAG & DROP
+   ═══════════════════════════════════════════════ */
+function onShapeMouseDown(e) {
+    if (e.button !== 0) return;
+    if (e.target.classList.contains('resize-handle')) return;
+
+    const el = e.currentTarget;
+    selectShape(el);
+
+    const rect = el.getBoundingClientRect();
+    dragState = {
+        el,
+        offsetX: e.clientX - rect.left,
+        offsetY: e.clientY - rect.top,
+    };
+    el.classList.add('dragging');
+    hideTooltip();
+    e.preventDefault();
+}
+
+document.addEventListener('mousemove', (e) => {
+    // Update stats
+    const area = canvasArea.getBoundingClientRect();
+    statMx.textContent = Math.round(e.clientX - area.left);
+    statMy.textContent = Math.round(e.clientY - area.top);
+
+    // Move tooltip
+    if (tooltip.classList.contains('visible')) {
+        tooltip.style.left = e.clientX + 14 + 'px';
+        tooltip.style.top  = e.clientY + 14 + 'px';
+    }
+
+    if (dragState) {
+        const areaRect = canvasArea.getBoundingClientRect();
+        let nx = e.clientX - areaRect.left - dragState.offsetX;
+        let ny = e.clientY - areaRect.top  - dragState.offsetY;
+        // Clamp
+        nx = Math.max(0, Math.min(areaRect.width  - dragState.el.offsetWidth,  nx));
+        ny = Math.max(0, Math.min(areaRect.height - dragState.el.offsetHeight, ny));
+        dragState.el.style.left = nx + 'px';
+        dragState.el.style.top  = ny + 'px';
+    }
+
+    if (resizeState) {
+        const areaRect = canvasArea.getBoundingClientRect();
+        const dx = e.clientX - resizeState.startX;
+        const dy = e.clientY - resizeState.startY;
+        const delta = Math.max(dx, dy);
+        let newSize = Math.max(30, resizeState.startSize + delta);
+        const shapeData = shapes.find(s => s.id === resizeState.el.dataset.id);
+        if (shapeData) {
+            shapeData.size = newSize;
+            renderShape(resizeState.el, shapeData.type, newSize, shapeData.color);
+        }
+    }
+});
+
+document.addEventListener('mouseup', () => {
+    if (dragState) {
+        dragState.el.classList.remove('dragging');
+        dragState = null;
+    }
+    if (resizeState) {
+        resizeState = null;
+    }
+});
+
+/* ═══════════════════════════════════════════════
+   RESIZE
+   ═══════════════════════════════════════════════ */
+function onResizeStart(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    const shapeEl = e.target.parentElement;
+    const shapeData = shapes.find(s => s.id === shapeEl.dataset.id);
+    if (!shapeData) return;
+    resizeState = {
+        el: shapeEl,
+        startX: e.clientX,
+        startY: e.clientY,
+        startSize: shapeData.size,
+    };
+    selectShape(shapeEl);
+}
+
+/* ═══════════════════════════════════════════════
+   SELECTION & CONTEXT MENU
+   ═══════════════════════════════════════════════ */
+function selectShape(el) {
+    document.querySelectorAll('.shape.selected').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    el.style.zIndex = zCounter++;
+    selectedShape = el;
+}
+
+function deselectAll() {
+    document.querySelectorAll('.shape.selected').forEach(s => s.classList.remove('selected'));
+    selectedShape = null;
+}
+
+canvasArea.addEventListener('mousedown', (e) => {
+    if (e.target === canvasArea || e.target.id === 'empty-state' || e.target.closest('#canvas-header')) {
+        deselectAll();
+    }
+    hideCtxMenu();
+});
+
+function onShapeContext(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    selectShape(e.currentTarget);
+    showCtxMenu(e.clientX, e.clientY);
+}
+
+canvasArea.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+
+function showCtxMenu(x, y) {
+    ctxMenu.style.left = x + 'px';
+    ctxMenu.style.top  = y + 'px';
+    ctxMenu.classList.add('visible');
+}
+
+function hideCtxMenu() {
+    ctxMenu.classList.remove('visible');
+}
+
+document.addEventListener('click', () => hideCtxMenu());
+
+/* ═══════════════════════════════════════════════
+   CONTEXT ACTIONS
+   ═══════════════════════════════════════════════ */
+function deleteSelected() {
+    if (!selectedShape) return;
+    const id = selectedShape.dataset.id;
+    selectedShape.style.transform = 'scale(0)';
+    selectedShape.style.opacity   = '0';
+    selectedShape.style.transition = 'all .25s ease';
+    setTimeout(() => {
+        selectedShape.remove();
+        shapes = shapes.filter(s => s.id !== id);
+        selectedShape = null;
+        updateStats();
+        if (shapes.length === 0) emptyState.classList.remove('hidden');
+    }, 260);
+    toast('Shape deleted');
+    hideCtxMenu();
+}
+
+function duplicateSelected() {
+    if (!selectedShape) return;
+    const data = shapes.find(s => s.id === selectedShape.dataset.id);
+    if (!data) return;
+    const rect = selectedShape.getBoundingClientRect();
+    const areaRect = canvasArea.getBoundingClientRect();
+    addShape(data.type, rect.left - areaRect.left + 20, rect.top - areaRect.top + 20, data.size, data.color);
+    toast('Shape duplicated');
+    hideCtxMenu();
+}
+
+function bringToFront() {
+    if (!selectedShape) return;
+    selectedShape.style.zIndex = zCounter++;
+    toast('Moved to front');
+    hideCtxMenu();
+}
+
+function sendToBack() {
+    if (!selectedShape) return;
+    selectedShape.style.zIndex = 0;
+    toast('Sent to back');
+    hideCtxMenu();
+}
+
+function changeColor() {
+    if (!selectedShape) return;
+    const data = shapes.find(s => s.id === selectedShape.dataset.id);
+    if (!data) return;
+    data.color = pick(COLORS);
+    selectedShape.dataset.color = data.color;
+    renderShape(selectedShape, data.type, data.size, data.color);
+    toast('Color changed');
+    hideCtxMenu();
+}
+
+function growShape() {
+    if (!selectedShape) return;
+    const data = shapes.find(s => s.id === selectedShape.dataset.id);
+    if (!data) return;
+    data.size = Math.min(300, data.size + 20);
+    renderShape(selectedShape, data.type, data.size, data.color);
+    hideCtxMenu();
+}
+
+function shrinkShape() {
+    if (!selectedShape) return;
+    const data = shapes.find(s => s.id === selectedShape.dataset.id);
+    if (!data) return;
+    data.size = Math.max(30, data.size - 20);
+    renderShape(selectedShape, data.type, data.size, data.color);
+    hideCtxMenu();
+}
+
+/* ═══════════════════════════════════════════════
+   SIDEBAR ACTIONS
+   ═══════════════════════════════════════════════ */
+function clearCanvas() {
+    document.querySelectorAll('.shape').forEach(el => {
+        el.style.transform = 'scale(0)';
+        el.style.opacity   = '0';
+        el.style.transition = 'all .3s ease';
+    });
+    setTimeout(() => {
+        document.querySelectorAll('.shape').forEach(el => el.remove());
+        shapes = [];
+        selectedShape = null;
+        updateStats();
+        emptyState.classList.remove('hidden');
+    }, 320);
+    toast('Canvas cleared');
+}
+
+function randomBurst() {
+    const types = ['circle','square','triangle','diamond','pentagon','hexagon','star','ellipse'];
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => addShape(pick(types)), i * 80);
+    }
+    toast('Added 5 random shapes');
+}
+
+function shuffleColors() {
+    shapes.forEach(data => {
+        data.color = pick(COLORS);
+        data.el.dataset.color = data.color;
+        renderShape(data.el, data.type, data.size, data.color);
+    });
+    toast('Colors shuffled');
+}
+
+/* ═══════════════════════════════════════════════
+   KEYBOARD
+   ═══════════════════════════════════════════════ */
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+        deleteSelected();
+    }
+    if (e.key === 'Escape') {
+        deselectAll();
+        hideCtxMenu();
+    }
+    // Arrow-key nudge
+    if (selectedShape && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+        e.preventDefault();
+        const step = e.shiftKey ? 10 : 2;
+        let l = parseFloat(selectedShape.style.left) || 0;
+        let t = parseFloat(selectedShape.style.top)  || 0;
+        if (e.key === 'ArrowUp')    t -= step;
+        if (e.key === 'ArrowDown')  t += step;
+        if (e.key === 'ArrowLeft')  l -= step;
+        if (e.key === 'ArrowRight') l += step;
+        selectedShape.style.left = l + 'px';
+        selectedShape.style.top  = t + 'px';
+    }
+});
+
+/* ═══════════════════════════════════════════════
+   HELPERS
+   ═══════════════════════════════════════════════ */
+function updateStats() {
+    statCount.textContent = shapes.length;
+}
+
+function showTooltip(text) {
+    tooltip.textContent = text;
+    tooltip.classList.add('visible');
+}
+
+function hideTooltip() {
+    tooltip.classList.remove('visible');
+}
+
+function toast(msg) {
+    snackbar.textContent = msg;
+    snackbar.classList.add('visible');
+    clearTimeout(snackTimeout);
+    snackTimeout = setTimeout(() => snackbar.classList.remove('visible'), 2200);
+}
+
+/* ═══════════════════════════════════════════════
+   BCI DASHBOARD INTEGRATION
+   ═══════════════════════════════════════════════ */
+const API_BASE = 'http://localhost:5000';
+let isSimulating = false;
+let simulationTimer = null;
+let bciStats = { total: 0, totalConf: 0 };
+let eegBuffer = [];
+const MAX_EEG_POINTS = 300;
+
+const bciCanvas = document.getElementById('bciCanvas');
+const bciCtx = bciCanvas.getContext('2d');
+
+function initBCICanvas() {
+    bciCanvas.width = bciCanvas.offsetWidth * window.devicePixelRatio;
+    bciCanvas.height = bciCanvas.offsetHeight * window.devicePixelRatio;
+    bciCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+}
+setTimeout(initBCICanvas, 100);
+window.addEventListener('resize', initBCICanvas);
+
+function drawBCIEEG() {
+    const w = bciCanvas.offsetWidth;
+    const h = bciCanvas.offsetHeight;
+    bciCtx.clearRect(0, 0, w, h);
+    if (eegBuffer.length < 2) return;
+
+    bciCtx.strokeStyle = 'rgba(255,255,255,0.05)';
+    bciCtx.beginPath(); bciCtx.moveTo(0, h/2); bciCtx.lineTo(w, h/2); bciCtx.stroke();
+
+    bciCtx.strokeStyle = '#18ffff';
+    bciCtx.lineWidth = 1.5;
+    bciCtx.beginPath();
+    const step = w / Math.max(eegBuffer.length - 1, 1);
+    eegBuffer.forEach((v, i) => {
+        const x = i * step;
+        const y = h / 2 - (v / 512) * (h * 0.45);
+        i === 0 ? bciCtx.moveTo(x, y) : bciCtx.lineTo(x, y);
+    });
+    bciCtx.stroke();
+}
+
+let bciEegPhase = 0;
+function bciGenerateEEGSample() {
+    bciEegPhase += 0.1;
+    return (Math.sin(bciEegPhase) * 150) + (Math.sin(bciEegPhase*3) * 50) + ((Math.random() - 0.5) * 80);
+}
+
+setInterval(() => {
+    if (isSimulating) {
+        eegBuffer.push(bciGenerateEEGSample());
+        if (eegBuffer.length > MAX_EEG_POINTS) eegBuffer.shift();
+        drawBCIEEG();
+    }
+}, 16);
+
+async function checkBCIHealth() {
+    try {
+        const res = await fetch(`${API_BASE}/health`);
+        const badge = document.getElementById('statusBadge');
+        if (res.ok) {
+            badge.className = 'connected';
+            document.getElementById('statusText').textContent = 'Connected';
+            return;
+        }
+    } catch (e) {}
+    document.getElementById('statusBadge').className = 'disconnected';
+    document.getElementById('statusText').textContent = 'Disconnected';
+}
+
+async function fetchSimulatedPrediction() {
+    try {
+        const res = await fetch(`${API_BASE}/simulate`);
+        if (!res.ok) throw new Error('API Error');
+        const data = await res.json();
+        updateBCIPrediction(data);
+    } catch (e) {
+        const label = Math.random() > 0.5 ? 'LEFT' : 'RIGHT';
+        const conf = 0.65 + Math.random() * 0.3;
+        updateBCIPrediction({
+            prediction: label,
+            confidence: conf,
+            latency_ms: Math.round(30 + Math.random() * 50)
+        });
+    }
+}
+
+function updateBCIPrediction(data) {
+    const { prediction, confidence, latency_ms } = data;
+    
+    const labelEl = document.getElementById('predictionLabel');
+    labelEl.textContent = prediction;
+    labelEl.className = 'pred-label ' + prediction;
+    labelEl.style.transform = 'scale(1.1)';
+    setTimeout(() => labelEl.style.transform = 'scale(1)', 150);
+
+    document.getElementById('metaConfidence').textContent = `${(confidence * 100).toFixed(1)}%`;
+    document.getElementById('metaLatency').textContent = `${latency_ms} ms`;
+    
+    bciStats.total++;
+    bciStats.totalConf += confidence;
+    document.getElementById('statTotal').textContent = bciStats.total;
+    document.getElementById('statAvgConf').textContent = `${((bciStats.totalConf / bciStats.total) * 100).toFixed(0)}%`;
+
+    // ===== BCI ASSISTIVE CONTROL: NUDGE SELECTED SHAPE =====
+    if (selectedShape) {
+        const step = 20; // 20px nudge
+        let l = parseFloat(selectedShape.style.left) || 0;
+        if (prediction === 'LEFT') l -= step;
+        if (prediction === 'RIGHT') l += step;
+        
+        // Clamp to screen bounds
+        const areaRect = canvasArea.getBoundingClientRect();
+        l = Math.max(0, Math.min(areaRect.width - selectedShape.offsetWidth, l));
+        
+        selectedShape.style.left = l + 'px';
+        selectedShape.style.transition = 'left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+        
+        // Highlight shape temporarily
+        selectedShape.style.boxShadow = `0 0 30px ${prediction === 'LEFT' ? 'var(--cyan)' : 'var(--orange)'}`;
+        setTimeout(() => {
+            selectedShape.style.transition = 'box-shadow .2s ease, filter .2s ease';
+            if (shapes.find(s => s.id === selectedShape.dataset.id)) {
+               const c = selectedShape.dataset.color;
+               selectedShape.style.boxShadow = `0 8px 32px ${c}55`;
+            }
+        }, 300);
+        
+        toast(`BCI Command: Nudged ${prediction}`);
+    }
+}
+
+function toggleSimulation() {
+    const btn = document.getElementById('btnSimulate');
+    if (isSimulating) {
+        isSimulating = false;
+        clearInterval(simulationTimer);
+        btn.textContent = '▶ Start Simulation';
+        btn.classList.remove('active');
+    } else {
+        isSimulating = true;
+        btn.textContent = '⏸ Stop Simulation';
+        btn.classList.add('active');
+        fetchSimulatedPrediction();
+        simulationTimer = setInterval(fetchSimulatedPrediction, 2000);
+    }
+}
+
+function clearBCISession() {
+    bciStats = { total: 0, totalConf: 0 };
+    document.getElementById('statTotal').textContent = '0';
+    document.getElementById('statAvgConf').textContent = '0%';
+    document.getElementById('predictionLabel').textContent = 'Waiting...';
+    document.getElementById('predictionLabel').className = 'pred-label idle';
+    document.getElementById('metaConfidence').textContent = '—';
+    document.getElementById('metaLatency').textContent = '—';
+    eegBuffer = [];
+    drawBCIEEG();
+}
+
+checkBCIHealth();
+setInterval(checkBCIHealth, 5000);
+
+</script>
+
+</body>
+</html>
