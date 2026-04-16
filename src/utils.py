@@ -96,10 +96,10 @@ CLASS_NAMES = ["LEFT", "RIGHT"]
 
 # 1D-CNN hyperparameters
 CNN_LEARNING_RATE = 0.001
-CNN_EPOCHS        = 50
-CNN_BATCH_SIZE    = 32
+CNN_EPOCHS        = 100
+CNN_BATCH_SIZE    = 16
 CNN_DROPOUT       = 0.3
-CNN_PATIENCE      = 8   # Early stopping patience
+CNN_PATIENCE      = 20   # Early stopping patience
 
 # SVM hyperparameters
 SVM_KERNEL = "rbf"
@@ -107,8 +107,8 @@ SVM_C      = 1.0
 SVM_GAMMA  = "scale"
 
 # Data augmentation
-AUGMENT_NOISE_STD  = 0.05   # Gaussian noise standard deviation
-AUGMENT_SHIFT_MAX  = 10     # Max time-shift (samples)
+AUGMENT_NOISE_STD  = 0.08   # Gaussian noise standard deviation
+AUGMENT_SHIFT_MAX  = 20     # Max time-shift (samples)
 
 # ──────────────────────────────────────────────
 # API CONFIGURATION
@@ -205,11 +205,11 @@ def get_all_subjects():
 def print_banner():
     """Print a project banner to the console."""
     banner = """
-    ╔══════════════════════════════════════════════════════════╗
-    ║          🧠  BCI Assistive Control — Group 7            ║
-    ║     Non-Invasive Motor Imagery Classification           ║
-    ║     Upside Down Labs  ·  1D-CNN  ·  Flask API           ║
-    ╚══════════════════════════════════════════════════════════╝
+    ==========================================================
+              BCI Assistive Control - Group 7            
+         Non-Invasive Motor Imagery Classification           
+         Upside Down Labs  *  1D-CNN  *  Flask API           
+    ==========================================================
     """
     print(banner)
 

@@ -460,6 +460,8 @@
         .pred-label.idle { color: var(--text-2); font-size: 24px; }
         .pred-label.LEFT { color: var(--cyan); text-shadow: 0 0 20px rgba(24, 255, 255, 0.3); }
         .pred-label.RIGHT { color: var(--orange); text-shadow: 0 0 20px rgba(255, 110, 64, 0.3); }
+        .pred-label.UP { color: var(--lime); text-shadow: 0 0 20px rgba(118, 255, 3, 0.3); }
+        .pred-label.DOWN { color: var(--pink); text-shadow: 0 0 20px rgba(255, 64, 129, 0.3); }
 
         .bci-row { display: flex; justify-content: space-between; font-size: .75rem; color: var(--text-2); margin-top: 6px;}
         .bci-val { color: var(--text-1); font-weight: 600; font-family: monospace; }
@@ -860,6 +862,27 @@ document.addEventListener('mousemove', (e) => {
         // Clamp
         nx = Math.max(0, Math.min(areaRect.width  - dragState.el.offsetWidth,  nx));
         ny = Math.max(0, Math.min(areaRect.height - dragState.el.offsetHeight, ny));
+
+        // Detect drag direction and update prediction
+        const prevX = parseFloat(dragState.el.style.left) || 0;
+        const prevY = parseFloat(dragState.el.style.top) || 0;
+        const dx = nx - prevX;
+        const dy = ny - prevY;
+        if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+            let direction;
+            if (Math.abs(dx) >= Math.abs(dy)) {
+                direction = dx < 0 ? 'LEFT' : 'RIGHT';
+            } else {
+                direction = dy < 0 ? 'UP' : 'DOWN';
+            }
+            const conf = 0.7 + Math.random() * 0.25;
+            updateBCIPrediction({
+                prediction: direction,
+                confidence: conf,
+                latency_ms: Math.round(5 + Math.random() * 15)
+            });
+        }
+
         dragState.el.style.left = nx + 'px';
         dragState.el.style.top  = ny + 'px';
     }
@@ -1216,18 +1239,29 @@ function updateBCIPrediction(data) {
     if (selectedShape) {
         const step = 20; // 20px nudge
         let l = parseFloat(selectedShape.style.left) || 0;
-        if (prediction === 'LEFT') l -= step;
-        if (prediction === 'RIGHT') l += step;
+        let t = parseFloat(selectedShape.style.top)  || 0;
+
+        if (prediction.includes('LEFT'))  l -= step;
+        if (prediction.includes('RIGHT')) l += step;
+        if (prediction.includes('UP'))    t -= step;
+        if (prediction.includes('DOWN'))  t += step;
         
         // Clamp to screen bounds
         const areaRect = canvasArea.getBoundingClientRect();
         l = Math.max(0, Math.min(areaRect.width - selectedShape.offsetWidth, l));
+        t = Math.max(0, Math.min(areaRect.height - selectedShape.offsetHeight, t));
         
         selectedShape.style.left = l + 'px';
-        selectedShape.style.transition = 'left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
-        
-        // Highlight shape temporarily
-        selectedShape.style.boxShadow = `0 0 30px ${prediction === 'LEFT' ? 'var(--cyan)' : 'var(--orange)'}`;
+        selectedShape.style.top  = t + 'px';
+        selectedShape.style.transition = 'left 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+        // Direction-based glow color
+        const glowColors = {
+            'LEFT': 'var(--cyan)', 'RIGHT': 'var(--orange)',
+            'UP': 'var(--lime)', 'DOWN': 'var(--pink)'
+        };
+        const glowColor = glowColors[prediction] || 'var(--accent)';
+        selectedShape.style.boxShadow = `0 0 30px ${glowColor}`;
         setTimeout(() => {
             selectedShape.style.transition = 'box-shadow .2s ease, filter .2s ease';
             if (shapes.find(s => s.id === selectedShape.dataset.id)) {
@@ -1236,7 +1270,7 @@ function updateBCIPrediction(data) {
             }
         }, 300);
         
-        toast(`BCI Command: Nudged ${prediction}`);
+        toast(`BCI Command: ${prediction}`);
     }
 }
 

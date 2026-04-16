@@ -30,3 +30,10 @@ pyserial>=3.5
 
 # Experiment paradigm UI
 pygame>=2.5
+
+# OS integration (Assistive control)
+pyautogui>=0.9.54
+
+# Camera-based eye tracking
+opencv-python>=4.8
+mediapipe>=0.10

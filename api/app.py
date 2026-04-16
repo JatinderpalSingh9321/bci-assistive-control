@@ -147,7 +147,7 @@ def predict():
     elif len(epoch) > EPOCH_SAMPLES:
         epoch = epoch[:EPOCH_SAMPLES]
 
-    # Predict
+    # Predict motor imagery (LEFT / RIGHT) using trained models
     try:
         if model_choice == "svm" and svm_model is not None:
             from src.feature_extraction import extract_band_power
@@ -260,15 +260,15 @@ def calibrate():
 @app.route("/simulate", methods=["GET"])
 def simulate_prediction():
     """
-    Generate a simulated prediction (for demo/testing without hardware).
-    Useful for testing the dashboard connection.
+    Generate a simulated motor imagery prediction (for demo/testing).
+    Only produces LEFT or RIGHT — blink/wink detection is handled
+    separately by the camera-based eye_tracker module.
     """
     from src.acquisition import generate_simulated_epoch
 
     label = np.random.randint(0, 2)
     epoch = generate_simulated_epoch(label=label)
 
-    # Create fake probabilities
     conf = 0.65 + np.random.random() * 0.25
     if label == 0:
         probs = [conf, 1 - conf]

@@ -154,7 +154,7 @@ def train_final_model(model_type, X, y, subject_ids):
         y_cat = tf.keras.utils.to_categorical(y, N_CLASSES)
 
         # Augment for final training
-        X_aug, y_aug = augment_dataset(X, y, augment_factor=1)
+        X_aug, y_aug = augment_dataset(X, y, augment_factor=3)
         X_aug_in = X_aug[..., np.newaxis]
         y_aug_cat = tf.keras.utils.to_categorical(y_aug, N_CLASSES)
 
