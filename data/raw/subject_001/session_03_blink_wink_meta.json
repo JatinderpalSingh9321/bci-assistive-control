@@ -1,0 +1,470 @@
+{
+  "test": "Test 2 \u2014 Blink & Wink",
+  "subject_id": 1,
+  "session_id": 3,
+  "electrode": "Fp1 referential (IN+=Fp1 forehead, IN-=earlobe)",
+  "classes": [
+    "BLINK",
+    "WINK_LEFT",
+    "WINK_RIGHT"
+  ],
+  "n_trials": 75,
+  "class_counts": {
+    "BLINK": 25,
+    "WINK_LEFT": 25,
+    "WINK_RIGHT": 25
+  },
+  "sampling_rate_hz": 250,
+  "trials": [
+    {
+      "trial": 1,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 3194
+    },
+    {
+      "trial": 2,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 3,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 4,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 5,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 6,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 7,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 8,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 9,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 10,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 11,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 12,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 13,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 14,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 15,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 16,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 17,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 18,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 19,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 20,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 21,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 22,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 23,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 24,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 25,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1756
+    },
+    {
+      "trial": 26,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 27,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1753
+    },
+    {
+      "trial": 28,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 29,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 30,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1753
+    },
+    {
+      "trial": 31,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1753
+    },
+    {
+      "trial": 32,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 33,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 34,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 35,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 36,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 37,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 38,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 39,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1756
+    },
+    {
+      "trial": 40,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 41,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 42,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 43,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1755
+    },
+    {
+      "trial": 44,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 45,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 46,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 47,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 48,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 49,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1753
+    },
+    {
+      "trial": 50,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1756
+    },
+    {
+      "trial": 51,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 52,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 53,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1753
+    },
+    {
+      "trial": 54,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 55,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1755
+    },
+    {
+      "trial": 56,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 57,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 58,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1755
+    },
+    {
+      "trial": 59,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 60,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 61,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 62,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1722
+    },
+    {
+      "trial": 63,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 64,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 65,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 66,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 67,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 68,
+      "class_id": 2,
+      "class_name": "WINK_RIGHT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 69,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 70,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 71,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 72,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1754
+    },
+    {
+      "trial": 73,
+      "class_id": 1,
+      "class_name": "WINK_LEFT",
+      "n_samples": 1753
+    },
+    {
+      "trial": 74,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    },
+    {
+      "trial": 75,
+      "class_id": 0,
+      "class_name": "BLINK",
+      "n_samples": 1754
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "total_samples": 225,
+  "train_samples": 180,
+  "test_samples": 45,
+  "cnn_accuracy": 0.3333333333333333,
+  "svm_accuracy": 0.4,
+  "epochs_trained": 16,
+  "training_time_sec": 10.931850910186768,
+  "class_counts": {
+    "BLINK": 75,
+    "WINK_LEFT": 75,
+    "WINK_RIGHT": 75
+  },
+  "confusion_matrix": [
+    [
+      6,
+      2,
+      7
+    ],
+    [
+      8,
+      3,
+      4
+    ],
+    [
+      8,
+      1,
+      6
+    ]
+  ],
+  "report": {
+    "BLINK": {
+      "precision": 0.2727272727272727,
+      "recall": 0.4,
+      "f1-score": 0.32432432432432434,
+      "support": 15.0
+    },
+    "WINK_LEFT": {
+      "precision": 0.5,
+      "recall": 0.2,
+      "f1-score": 0.2857142857142857,
+      "support": 15.0
+    },
+    "WINK_RIGHT": {
+      "precision": 0.35294117647058826,
+      "recall": 0.4,
+      "f1-score": 0.375,
+      "support": 15.0
+    },
+    "accuracy": 0.3333333333333333,
+    "macro avg": {
+      "precision": 0.375222816399287,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.32834620334620335,
+      "support": 45.0
+    },
+    "weighted avg": {
+      "precision": 0.37522281639928695,
+      "recall": 0.3333333333333333,
+      "f1-score": 0.32834620334620335,
+      "support": 45.0
+    }
+  },
+  "best_val_loss": 1.0905559062957764,
+  "best_val_accuracy": 0.3888888955116272
+}

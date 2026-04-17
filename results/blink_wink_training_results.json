@@ -1,0 +1,69 @@
+{
+  "train_accuracy": 0.6266666666666667,
+  "cv_accuracy": 0.4133333333333334,
+  "cv_std": 0.08844332774281066,
+  "cv_scores": [
+    0.4,
+    0.5333333333333333,
+    0.4,
+    0.26666666666666666,
+    0.4666666666666667
+  ],
+  "n_trials": 75,
+  "n_features": 26,
+  "class_counts": {
+    "BLINK": 25,
+    "WINK_LEFT": 25,
+    "WINK_RIGHT": 25
+  },
+  "report": {
+    "BLINK": {
+      "precision": 0.6363636363636364,
+      "recall": 0.56,
+      "f1-score": 0.5957446808510638,
+      "support": 25.0
+    },
+    "WINK_LEFT": {
+      "precision": 0.625,
+      "recall": 0.6,
+      "f1-score": 0.6122448979591837,
+      "support": 25.0
+    },
+    "WINK_RIGHT": {
+      "precision": 0.6206896551724138,
+      "recall": 0.72,
+      "f1-score": 0.6666666666666666,
+      "support": 25.0
+    },
+    "accuracy": 0.6266666666666667,
+    "macro avg": {
+      "precision": 0.6273510971786833,
+      "recall": 0.6266666666666667,
+      "f1-score": 0.6248854151589714,
+      "support": 75.0
+    },
+    "weighted avg": {
+      "precision": 0.6273510971786834,
+      "recall": 0.6266666666666667,
+      "f1-score": 0.6248854151589713,
+      "support": 75.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      14,
+      6,
+      5
+    ],
+    [
+      4,
+      15,
+      6
+    ],
+    [
+      4,
+      3,
+      18
+    ]
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "subject_id": "099",
+  "session_id": "01",
+  "date": "2026-04-16 22:26:45",
+  "sampling_rate_hz": 250,
+  "channels": [
+    "C3",
+    "C4",
+    "Fp1",
+    "Fp2"
+  ],
+  "electrode_setup": {
+    "C3": "Left motor cortex (A0) \u2014 ref: left earlobe (A1)",
+    "C4": "Right motor cortex (A1) \u2014 ref: right earlobe (A2)",
+    "Fp1": "Left forehead (A2) \u2014 ref: left earlobe",
+    "Fp2": "Right forehead (A3) \u2014 ref: right earlobe"
+  },
+  "tasks": {
+    "MI": {
+      "LEFT": 2,
+      "RIGHT": 1
+    },
+    "EOG": {
+      "BLINK": 1,
+      "WINK_LEFT": 3,
+      "WINK_RIGHT": 1
+    }
+  },
+  "control_mapping": {
+    "LEFT": "Cursor \u2190 Left",
+    "RIGHT": "Cursor \u2192 Right",
+    "BLINK": "Mouse Click",
+    "WINK_LEFT": "Cursor \u2191 Up",
+    "WINK_RIGHT": "Cursor \u2193 Down"
+  },
+  "timing": {
+    "relax_s": 2.0,
+    "cue_s": 1.0,
+    "mi_imagery_s": 4.0,
+    "eog_action_s": 3.0,
+    "rest_s": 2.0
+  },
+  "total_trials": 8
+}
