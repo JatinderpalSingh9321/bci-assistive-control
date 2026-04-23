@@ -117,9 +117,10 @@ class BlinkDetector:
         self.debug = debug
         self.noise_level = 10.0
         self.baseline = 512.0
+        self.min_abs_thresh = 40.0 # Prevents triggering on micro-noise
         self.in_blink = False
         self.blink_start_time = 0
-        self.last_blink_end_time = 0  # For refractory period
+        self.last_blink_end_time = 0
         self.calibrated = False
         self.cal_samples = []
         self.cal_needed = 500
@@ -152,7 +153,9 @@ class BlinkDetector:
 
         centered = samples - self.baseline
         max_defl = np.max(np.abs(centered))
-        threshold = self.noise_level * self.sensitivity
+        
+        # Adaptive threshold with a safety floor
+        threshold = max(self.noise_level * self.sensitivity, self.min_abs_thresh)
         is_active = max_defl > threshold
 
         if self.debug and int(now * 5) % 5 == 0:
@@ -193,6 +196,7 @@ class BufferedController:
         self.blink_count = 0
         self.state = "DETECTING" # "DETECTING" or "COOLDOWN"
         self.phase_start = time.time()
+        self.last_countdown = -1
         self.total_actions = 0
 
     def tick(self):
@@ -215,15 +219,21 @@ class BufferedController:
             self.execute_action()
             self.state = "COOLDOWN"
             self.phase_start = now
-            logger.info(f"\n  [PHASE] >>> Switching to COOLDOWN ({self.cool_time}s)")
+            self.last_countdown = -1 # Reset countdown trigger
 
-        elif self.state == "COOLDOWN" and elapsed >= self.cool_time:
-            self.blink_count = 0
-            self.state = "DETECTING"
-            self.phase_start = now
-            logger.info("\n" + "="*40)
-            logger.info(f"  [PHASE] >>> Switching to DETECTION ({self.det_time}s)")
-            logger.info("="*40 + "\n")
+        elif self.state == "COOLDOWN":
+            remaining = int(self.cool_time - elapsed + 0.5)
+            if remaining > 0 and remaining != self.last_countdown:
+                logger.info(f"  [WAIT] Calibration/Reseting... Ready in {remaining}s")
+                self.last_countdown = remaining
+
+            if elapsed >= self.cool_time:
+                self.blink_count = 0
+                self.state = "DETECTING"
+                self.phase_start = now
+                logger.info("\n" + "#"*50)
+                logger.info("  >>> [START] DETECTION WINDOW OPEN - BLINK NOW! <<<")
+                logger.info("#"*50 + "\n")
 
     def execute_action(self):
         if self.blink_count == 0:
